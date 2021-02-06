@@ -11,12 +11,20 @@ auth_blueprint = Blueprint('auth', __name__)
 class ViewUsersAPI(MethodView):
     def get(self):
         user_email_list= []
-        for email_query in db.session.query(User.email):
-            print(email_query)
-            email = email_query[0]
-            print(email)
-            user_email_list.append(email)
-        return make_response(jsonify(user_email_list)), 201
+        try:
+            for email_query in db.session.query(User.email):
+                print(email_query)
+                email = email_query[0]
+                print(email)
+                user_email_list += [email]
+            return make_response(jsonify(user_email_list)), 201
+        except Exception as e:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Some error occurred. Please try again.'
+            }
+            return make_response(jsonify(responseObject)), 401
+
 
 
 class RegisterAPI(MethodView):
